@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 /bert/
 /bert_crf/
+/bilstm_crf/

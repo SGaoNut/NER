@@ -10,11 +10,11 @@ import pickle
 
 import numpy as np
 import tensorflow as tf
-from transformers import BertTokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from transformers import BertTokenizer
 from transformers import TFBertForTokenClassification
-import util
 
+import util
 
 with open("./data/dataset.pkl", 'rb') as f:
     train_sentences, val_sentences, test_sentences, tag_2_id, id_2_tag = pickle.load(f)
@@ -57,6 +57,7 @@ def convert_sample_to_feature(text, max_length):
     )
     return sequence_input
 
+
 def map_sample_to_dict(input_ids, token_type_ids, attention_masks, label):
     return {
                "input_ids": input_ids,
@@ -91,6 +92,7 @@ def dataset_built(samples, tag_2_id, max_length, batch_size, is_train):
         dataset = dataset.shuffle(buffer_size)
     dataset = dataset.batch(batch_size).prefetch(buffer_size)
     return dataset
+
 
 # def dataset_built(samples, tag_2_id, max_length, batch_size, is_train):
 #     input_ids = []
@@ -134,12 +136,10 @@ train_dataset = dataset_built(train_sentences, tag_2_id, MAX_SEQ_LEN, BATCH_SIZE
 val_dataset = dataset_built(val_sentences, tag_2_id, MAX_SEQ_LEN, BATCH_SIZE, False)
 test_dataset = dataset_built(test_sentences, tag_2_id, MAX_SEQ_LEN, BATCH_SIZE, False)
 
-
 # 模型初始化
 
 NUM_LABELS = len(list(tag_2_id))
 PATIENCE = 2
-
 
 model = TFBertForTokenClassification.from_pretrained(
     'bert-base-chinese',
@@ -206,7 +206,6 @@ output = saved_model(predict_inputs)
 predict_logits = output.logits.numpy()
 # 取最大标签分数结果
 predict_label_ids = np.argmax(predict_logits, axis=2).tolist()
-
 
 # 格式化展示结果
 for text, pred_ids in zip(predict_sentences, predict_label_ids):
